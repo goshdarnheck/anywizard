@@ -134,7 +134,11 @@ for x in range(templateImage.size[0] - 96, templateImage.size[0]):
 templateImage.save('output.png')
 
 # Create Random Name
-tweet = '%s %s %s' % (random.choice(list(open('adjectives.txt'))), random.choice(list(open('nouns.txt'))), random.choice(list(open('jobs.txt'))))
+tweet = '%s %s %s' % (
+	random.choice(list(open('adjectives.txt'))).rstrip().title(),
+	random.choice(list(open('nouns.txt'))).rstrip(),
+	random.choice(list(open('jobs.txt'))).rstrip()
+)
 print(tweet)
 
 # Tweet!
