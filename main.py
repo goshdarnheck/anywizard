@@ -12,8 +12,9 @@ def get_api(cfg):
     return tweepy.API(auth)
 
 # Read Config File
+dir = os.path.dirname(__file__)
 Config = ConfigParser.ConfigParser()
-Config.read('config.ini')
+Config.read(os.path.join(dir, 'config.ini'))
 
 twitterConfig = { 
     'consumer_key'        : Config.get('TwitterApiCreds', 'consumer_key'),
@@ -23,17 +24,17 @@ twitterConfig = {
 }
 
 # random template
-templateImageList = os.listdir('./templates')
-templateImage = Image.open('templates/%s' % random.choice(templateImageList))
+templateImageList = os.listdir('%s/templates' % dir)
+templateImage = Image.open('%s/templates/%s' % (dir, random.choice(templateImageList)))
 templateImage = templateImage.convert('RGBA')
 
 # random  fill image
-fillImageList = os.listdir('./images')
-fillImage = Image.open('images/%s' % random.choice(fillImageList))
+fillImageList = os.listdir('%s/images' % dir)
+fillImage = Image.open('%s/images/%s' % (dir, random.choice(fillImageList)))
 fillImage = fillImage.convert('RGBA')
 
 # watermark image
-watermarkImage = Image.open('watermark.png')
+watermarkImage = Image.open(os.path.join(os.path.dirname(__file__), 'watermark.png'))
 watermarkImage = watermarkImage.convert('RGBA')
 
 templateImagePixels = templateImage.load()
@@ -131,16 +132,16 @@ for x in range(templateImage.size[0] - 96, templateImage.size[0]):
             templateImagePixels[x, y] = watermarkImagePixels[x - templateImage.size[0] + 96, y - templateImage.size[1] + 20]
     
 # Save Image
-templateImage.save('output.png')
+templateImage.save(os.path.join(dir, 'output.png'))
 
 # Create Random Name
 tweet = '%s %s %s' % (
-	random.choice(list(open('adjectives.txt'))).rstrip().title(),
-	random.choice(list(open('nouns.txt'))).rstrip(),
-	random.choice(list(open('jobs.txt'))).rstrip()
+	random.choice(list(open(os.path.join(os.path.dirname(__file__), 'adjectives.txt')))).rstrip().title(),
+	random.choice(list(open(os.path.join(os.path.dirname(__file__), 'nouns.txt')))).rstrip(),
+	random.choice(list(open(os.path.join(os.path.dirname(__file__), 'jobs.txt')))).rstrip()
 )
-# print(tweet)
+print(tweet)
 
 # Tweet!
 api = get_api(twitterConfig)
-api.update_with_media('output.png', tweet)
+# api.update_with_media('output.png', tweet)
