@@ -1,0 +1,14 @@
+cleric
+druid
+mage
+maji
+potion-master
+sorcerer
+sorceress
+warlock
+witch
+wizard
+wizard
+wizard
+wizard
+wizard
