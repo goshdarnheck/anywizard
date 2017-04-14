@@ -139,8 +139,8 @@ tweet = '%s %s %s' % (
 	random.choice(list(open('nouns.txt'))).rstrip(),
 	random.choice(list(open('jobs.txt'))).rstrip()
 )
-print(tweet)
+# print(tweet)
 
 # Tweet!
 api = get_api(twitterConfig)
-##api.update_with_media('output.png', tweet)
+api.update_with_media('output.png', tweet)
