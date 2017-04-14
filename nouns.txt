@@ -1,16 +1,21 @@
 acid
+apartment
 astral
 astro
 bar
 blade
 bong
 brain
+branch
 bug
 butter
+camo
 cat
 clone
 cloud
+code
 colour
+condo
 cow
 curse
 dancing
@@ -30,6 +35,7 @@ ice
 ice cream
 kitty
 lava
+leaf
 lightning
 magic
 mind
@@ -47,9 +53,11 @@ sports
 starship
 stone
 storm
+stump
 sun
 swamp
 telekenesis
+tree
 thunder
 time
 vampire

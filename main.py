@@ -6,8 +6,21 @@ import tweepy
 from colour import Color
 from pprint import pprint
 
+def get_api(cfg):
+    auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
+    auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
+    return tweepy.API(auth)
+
+# Read Config File
 Config = ConfigParser.ConfigParser()
 Config.read('config.ini')
+
+twitterConfig = { 
+    'consumer_key'        : Config.get('TwitterApiCreds', 'consumer_key'),
+    'consumer_secret'     : Config.get('TwitterApiCreds', 'consumer_secret'),
+    'access_token'        : Config.get('TwitterApiCreds', 'access_token'),
+    'access_token_secret' : Config.get('TwitterApiCreds', 'access_token_secret') 
+}
 
 # random template
 templateImageList = os.listdir('./templates')
@@ -91,8 +104,8 @@ coloursToReplace = [
 
 imageIndex = random.randint(0, len(coloursToReplace) -1)
 
+# Generate Random Colours
 randomColours = []
-
 for i in range(0, len(coloursToReplace)):
     c = Color(hsl=(random.uniform(0, 1), 1, 0.5))
     r = max(0, int(round(c.red * 256 -1)))
@@ -101,6 +114,7 @@ for i in range(0, len(coloursToReplace)):
 
     randomColours.append([r,g,b])
 
+# Replace Colours
 for y in xrange(templateImage.size[1]):
     for x in xrange(templateImage.size[0]):
         for z in range(0, len(coloursToReplace)):
@@ -110,30 +124,19 @@ for y in xrange(templateImage.size[1]):
                 else:
                     templateImagePixels[x, y] = (randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
 
+# Add Watermark
 for x in range(templateImage.size[0] - 96, templateImage.size[0]):
     for y in range(templateImage.size[1] - 20, templateImage.size[1]):
         if (watermarkImagePixels[x - templateImage.size[0] + 96, y - templateImage.size[1] + 20][3] >= 255):
             templateImagePixels[x, y] = watermarkImagePixels[x - templateImage.size[0] + 96, y - templateImage.size[1] + 20]
     
-
+# Save Image
 templateImage.save('output.png')
 
+# Create Random Name
 tweet = '%s %s %s' % (random.choice(list(open('adjectives.txt'))), random.choice(list(open('nouns.txt'))), random.choice(list(open('jobs.txt'))))
-
 print(tweet)
 
-cfg = { 
-    'consumer_key'        : Config.get('TwitterApiCreds', 'consumer_key'),
-    'consumer_secret'     : Config.get('TwitterApiCreds', 'consumer_secret'),
-    'access_token'        : Config.get('TwitterApiCreds', 'access_token'),
-    'access_token_secret' : Config.get('TwitterApiCreds', 'access_token_secret') 
-}
-
-def get_api(cfg):
-    auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
-    auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
-    return tweepy.API(auth)
-
-api = get_api(cfg)
-
+# Tweet!
+api = get_api(twitterConfig)
 ##api.update_with_media('output.png', tweet)
