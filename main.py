@@ -144,4 +144,4 @@ print(tweet)
 
 # Tweet!
 api = get_api(twitterConfig)
-api.update_with_media('output.png', tweet)
+api.update_with_media(os.path.join(dir, 'output.png'), tweet)
