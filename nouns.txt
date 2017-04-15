@@ -16,10 +16,12 @@ cloud
 code
 colour
 condo
+coronal mass ejections
 cow
 curse
 dancing
 dimension
+dirt
 dog
 dream
 egg
@@ -29,6 +31,7 @@ fear
 fire
 fireball
 frost
+gamma-ray
 grease
 healing
 ice
@@ -39,6 +42,7 @@ leaf
 lightning
 magic
 mind
+moon
 nebula
 pie
 planet
@@ -50,6 +54,7 @@ sleep
 space
 spider
 sports
+star
 starship
 stone
 storm

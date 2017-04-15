@@ -27,7 +27,6 @@ decisive
 determined
 diligent
 diplomatic
-discreet
 dynamic
 easygoing
 emotional
@@ -37,7 +36,6 @@ exuberant
 fair-minded
 faithful
 fearless
-forceful
 frank
 friendly
 funny
@@ -98,7 +96,7 @@ tough
 unassuming
 understanding
 versatile
-warmhearted
+warm-hearted
 weird
 willing
 witty
