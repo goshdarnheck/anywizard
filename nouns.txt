@@ -71,6 +71,7 @@ crystal
 curse
 dancing
 dark matter
+data
 dimension
 dinner
 dirt
@@ -96,6 +97,7 @@ fire
 fireball
 flower
 folk
+food
 forest
 frost
 galactic
@@ -123,11 +125,13 @@ kitty
 knife
 knight
 lava
+law
 leaf
 librarian
 light-bulb
 light beer
 lightning
+licorice
 luminous ether
 lunch
 magic
@@ -135,10 +139,12 @@ magnet
 magnetism
 marker
 metal
+meat
 mind
 moon
 moss
 muffin
+music
 nebula
 night
 owl
@@ -188,6 +194,7 @@ sword
 tea
 telekenesis
 theatre
+theory
 thunder
 time
 tomato
