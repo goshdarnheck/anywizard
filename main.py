@@ -6,6 +6,11 @@ import tweepy
 from colour import Color
 from pprint import pprint
 
+# TODO
+# Add test mode (no tweet)
+# arg for template
+# make it sometimes replace two colours with an image
+
 def get_api(cfg):
     auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
     auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
