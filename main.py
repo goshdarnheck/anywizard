@@ -31,6 +31,7 @@ twitterConfig = {
 # random template
 templateImageList = os.listdir('%s/templates' % dir)
 templateImage = Image.open('%s/templates/%s' % (dir, random.choice(templateImageList)))
+# templateImage = Image.open('%s/templates/call-of-the-wizard.png' % dir)
 templateImage = templateImage.convert('RGBA')
 
 # random  fill image
@@ -113,7 +114,7 @@ imageIndex = random.randint(0, len(coloursToReplace) -1)
 # Generate Random Colours
 randomColours = []
 for i in range(0, len(coloursToReplace)):
-    c = Color(hsl=(random.uniform(0, 1), random.uniform(0.7, 1), 0.5))
+    c = Color(hsl=(random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1)))
     r = max(0, int(round(c.red * 256 -1)))
     g = max(0, int(round(c.green * 256 -1)))
     b = max(0, int(round(c.blue * 256 -1)))
