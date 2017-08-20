@@ -31,7 +31,7 @@ twitterConfig = {
 # random template
 templateImageList = os.listdir('%s/templates' % dir)
 templateImage = Image.open('%s/templates/%s' % (dir, random.choice(templateImageList)))
-# templateImage = Image.open('%s/templates/matt_wizard_5.png' % dir)
+# templateImage = Image.open('%s/templates/matt_wizard_6.png' % dir)
 templateImage = templateImage.convert('RGBA')
 
 # random  fill image
