@@ -1,0 +1,20 @@
+# TODO
+
+- add test mode (no tweet)
+- arg for template
+- templates in zip file or similar
+- template file:
+  - mutiple images (to give ability for variations)
+  - text file indicating which colours to swap
+  - mask file to set area for image replacement
+  - mask files for different effects (glitch, blur, negative etc.)
+- draw new wizard
+- read colours to replace from text file
+- read mask file for image replacement
+- look up if there is an easier way to add the watermark image on top with Pillow
+- find/write better algorithm for colour replacement (or see if Pillow can do it?)
+- make names fancier
+  - more variations for grammar (add random titles, "of Coolplace" type of things)
+  - emojis
+- make code better
+- test code please
