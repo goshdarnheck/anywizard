@@ -143,13 +143,15 @@ for x in range(templateImage.size[0] - 96, templateImage.size[0]):
 templateImage.save(os.path.join(dir, 'output.png'))
 
 # Create Random Name
-tweet = '%s %s %s' % (
+tweet = '%s %s %s %s' % (
         random.choice(list(open(os.path.join(os.path.dirname(
-            __file__), 'adjectives.txt')))).rstrip().title(),
+            __file__), 'text/adjectives.txt')))).rstrip().title(),
         random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'nouns.txt')))).rstrip(),
+            list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
         random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'jobs.txt')))).rstrip()
+            list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
+    random.choice(
+        list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
 )
 print(tweet)
 
