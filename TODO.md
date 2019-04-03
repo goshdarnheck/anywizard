@@ -16,5 +16,6 @@
 - make names fancier
   - more variations for grammar (add random titles, "of Coolplace" type of things)
   - emojis
+  - DND stats
 - make code better
 - test code please

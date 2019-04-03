@@ -1,8 +1,9 @@
 import configparser
-from PIL import Image
 import random
 import os
+import json
 import tweepy
+from PIL import Image
 from colour import Color
 from pprint import pprint
 
@@ -25,16 +26,26 @@ twitterConfig = {
     'access_token_secret': Config.get('TwitterApiCreds', 'access_token_secret')
 }
 
+tweet = Config.getboolean('settings', 'tweet')
+print(tweet)
+
+# get those colours to replace
+with open((os.path.join(os.path.dirname(__file__), 'templates/original/config.json'))) as f:
+    coloursToReplaceJson = json.load(f)
+coloursToReplace = coloursToReplaceJson["colours"]
+
 # random template
 templateImageList = os.listdir('%s/templates' % dir)
-templateImage = Image.open('%s/templates/%s' %
-                           (dir, random.choice(templateImageList)))
-# templateImage = Image.open('%s/templates/matt_wizard_6.png' % dir)
+# templateImage = Image.open('%s/templates/%s' %
+#                            (dir, random.choice(templateImageList)))
+templateImage = Image.open('%s/templates/FloatOrbWiz.png' % dir)
 templateImage = templateImage.convert('RGBA')
 
 # random  fill image
 fillImageList = os.listdir('%s/images' % dir)
-fillImage = Image.open('%s/images/%s' % (dir, random.choice(fillImageList)))
+# fillImage = Image.open('%s/images/%s' % (dir, random.choice(fillImageList)))
+fillImage = Image.open('%s/images/%s' %
+                       (dir, "nasa88.png"))
 fillImage = fillImage.convert('RGBA')
 
 # watermark image
@@ -45,68 +56,6 @@ watermarkImage = watermarkImage.convert('RGBA')
 templateImagePixels = templateImage.load()
 fillImagePixels = fillImage.load()
 watermarkImagePixels = watermarkImage.load()
-
-coloursToReplace = [
-    # Red
-    # ff0000
-    [255, 0, 0, 255],
-
-    # Green
-    # 00ff00
-    [0, 255, 0, 255],
-
-    # Blue
-    # 0000ff
-    [0, 0, 255, 255],
-
-    # Red MEDIUMN
-    # cc0000
-    [204, 0, 0, 255],
-
-    # Green MEDIUMN
-    # 00cc00
-    [0, 204, 0, 255],
-
-    # Blue MEDIUMN
-    # 0000cc
-    [0, 0, 204, 255],
-
-    # Red DARK
-    # 660000
-    [102, 0, 0, 255],
-
-    # Green DARK
-    # 006600
-    [0, 102, 0, 255],
-
-    # Blue DARK
-    # 000066
-    [0, 0, 102, 255],
-
-    # Yellow
-    # ffff00
-    [255, 255, 0, 255],
-
-    # Cyan
-    # 00ffff
-    [0, 255, 255, 255],
-
-    # Magenta
-    # ff00ff
-    [255, 0, 255, 255],
-
-    # Orange
-    # ff9900
-    [255, 153, 0, 255],
-
-    # Spring Green
-    # 00ff99
-    [0, 255, 153, 255],
-
-    # Electric Violet
-    # 9900ff
-    [153, 0, 255, 255]
-]
 
 imageIndex = random.randint(0, len(coloursToReplace) - 1)
 
@@ -143,18 +92,19 @@ for x in range(templateImage.size[0] - 96, templateImage.size[0]):
 templateImage.save(os.path.join(dir, 'output.png'))
 
 # Create Random Name
-tweet = '%s %s %s %s' % (
-        random.choice(list(open(os.path.join(os.path.dirname(
-            __file__), 'text/adjectives.txt')))).rstrip().title(),
-        random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
-        random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
+tweetText = '%s %s %s %s' % (
+    random.choice(list(open(os.path.join(os.path.dirname(
+        __file__), 'text/adjectives.txt')))).rstrip().title(),
+    random.choice(
+        list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
+    random.choice(
+        list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
     random.choice(
         list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
 )
-print(tweet)
+print(tweetText)
 
 # Tweet!
-# tweepyApi = getTweepyApi(twitterConfig)
-# tweepyApi.update_with_media(os.path.join(dir, 'output.png'), tweet)
+if tweet:
+    tweepyApi = getTweepyApi(twitterConfig)
+    tweepyApi.update_with_media(os.path.join(dir, 'output.png'), tweetText)

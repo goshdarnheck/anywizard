@@ -175,6 +175,7 @@ fabric
 fact
 fairy
 farm
+fart
 farmer
 fast food
 fear
@@ -196,6 +197,7 @@ galaxy
 gamma-ray
 garbage
 gate
+gas
 glasses
 glue
 goal
