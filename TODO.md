@@ -1,5 +1,6 @@
 # TODO
 
+- chance for black and white
 - add test mode (no tweet)
 - arg for template
 - templates in zip file or similar

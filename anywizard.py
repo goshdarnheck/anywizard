@@ -27,26 +27,27 @@ twitterConfig = {
 }
 
 tweet = Config.getboolean('settings', 'tweet')
-print(tweet)
 
-# get those colours to replace
-with open((os.path.join(os.path.dirname(__file__), 'templates/original/config.json'))) as f:
+# Choose random template and open template image
+templateImageList = os.listdir('%s/templates' % dir)
+templateFolderName = random.choice(templateImageList)
+templateImage = Image.open('%s/templates/%s/wizard.1.png' %
+                           (dir, templateFolderName))
+templateImage = templateImage.convert('RGBA')
+print("Template Folder: " + templateFolderName)
+print("Template Image: wizard.1.png")
+
+# Load colours to replace from template config
+with open((os.path.join(os.path.dirname(__file__), 'templates/%s/config.json' % templateFolderName))) as f:
     coloursToReplaceJson = json.load(f)
 coloursToReplace = coloursToReplaceJson["colours"]
 
-# random template
-templateImageList = os.listdir('%s/templates' % dir)
-# templateImage = Image.open('%s/templates/%s' %
-#                            (dir, random.choice(templateImageList)))
-templateImage = Image.open('%s/templates/FloatOrbWiz.png' % dir)
-templateImage = templateImage.convert('RGBA')
-
 # random  fill image
 fillImageList = os.listdir('%s/images' % dir)
-# fillImage = Image.open('%s/images/%s' % (dir, random.choice(fillImageList)))
-fillImage = Image.open('%s/images/%s' %
-                       (dir, "nasa88.png"))
+fillImageName = random.choice(fillImageList)
+fillImage = Image.open('%s/images/%s' % (dir, fillImageName))
 fillImage = fillImage.convert('RGBA')
+print("Fill Image: " + fillImageName)
 
 # watermark image
 watermarkImage = Image.open(os.path.join(
@@ -90,6 +91,7 @@ for x in range(templateImage.size[0] - 96, templateImage.size[0]):
 
 # Save Image
 templateImage.save(os.path.join(dir, 'output.png'))
+print("Output: " + os.path.join(dir, 'output.png'))
 
 # Create Random Name
 tweetText = '%s %s %s %s' % (
@@ -102,9 +104,11 @@ tweetText = '%s %s %s %s' % (
     random.choice(
         list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
 )
-print(tweetText)
+print("Tweet: " + tweetText)
 
 # Tweet!
+print("Tweeting: " + str(tweet))
 if tweet:
     tweepyApi = getTweepyApi(twitterConfig)
-    tweepyApi.update_with_media(os.path.join(dir, 'output.png'), tweetText)
+    thing = tweepyApi.update_with_media(
+        os.path.join(dir, 'output.png'), tweetText)
