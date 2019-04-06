@@ -5,13 +5,75 @@ import json
 import tweepy
 from PIL import Image
 from colour import Color
-from pprint import pprint
 
 
 def getTweepyApi(cfg):
     auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
     auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
     return tweepy.API(auth)
+
+
+def getRandomColoursList():
+    randomColours = []
+    for i in range(0, len(coloursToReplace)):
+        c = Color(hsl=(random.uniform(0, 1),
+                       random.uniform(0, 1), random.uniform(0, 1)))
+        r = max(0, int(round(c.red * 256 - 1)))
+        g = max(0, int(round(c.green * 256 - 1)))
+        b = max(0, int(round(c.blue * 256 - 1)))
+
+        randomColours.append([r, g, b])
+
+    return randomColours
+
+
+def getTemplateFolderName(templateSetting):
+    templateImageList = os.listdir('%s/templates' % dir)
+    templateFolderName = random.choice(
+        templateImageList) if templateSetting == 'random' else templateSetting
+    return templateFolderName
+
+
+def getRandomTemplateImage(templateFolderName):
+    templateImage = Image.open('%s/templates/%s/wizard.2.png' %
+                               (dir, templateFolderName))
+    templateImage = templateImage.convert('RGBA')
+    return templateImage
+
+
+def getRandomFillImageName():
+    fillImageList = os.listdir('%s/images' % dir)
+    return random.choice(fillImageList)
+
+
+def openRandomFillImage(fillImageName):
+    fillImage = Image.open('%s/images/%s' % (dir, fillImageName))
+    fillImage = fillImage.convert('RGBA')
+    return fillImage
+
+
+def getRandomTweetText():
+    tweetText = '%s %s %s %s' % (
+        random.choice(list(open(os.path.join(os.path.dirname(
+            __file__), 'text/adjectives.txt')))).rstrip().title(),
+        random.choice(
+            list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
+        random.choice(
+            list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
+        random.choice(
+            list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
+    )
+    return tweetText
+
+
+def getRandomFxMaskImageName(templateFolderName, removeThis):
+    return '%s/fx.%s.png' % (templateFolderName, removeThis)
+
+
+def getRandomFxMaskImage(fxMaskImageName):
+    fxMaskImage = Image.open('templates/%s' % fxMaskImageName)
+    fxMaskImage = fxMaskImage.convert('RGBA')
+    return fxMaskImage
 
 
 # Read Config File
@@ -27,83 +89,77 @@ twitterConfig = {
 }
 
 tweet = Config.getboolean('settings', 'tweet')
+templateSetting = Config.get('settings', 'template')
 
-# Choose random template and open template image
-templateImageList = os.listdir('%s/templates' % dir)
-templateFolderName = random.choice(templateImageList)
-templateImage = Image.open('%s/templates/%s/wizard.1.png' %
-                           (dir, templateFolderName))
-templateImage = templateImage.convert('RGBA')
+
+# Choose random template and open template image and convert to rgba
+templateFolderName = getTemplateFolderName(templateSetting)
+templateImage = getRandomTemplateImage(templateFolderName)
 print("Template Folder: " + templateFolderName)
-print("Template Image: wizard.1.png")
+print("Template Image: wizard.2.png")
 
 # Load colours to replace from template config
 with open((os.path.join(os.path.dirname(__file__), 'templates/%s/config.json' % templateFolderName))) as f:
     coloursToReplaceJson = json.load(f)
 coloursToReplace = coloursToReplaceJson["colours"]
 
-# random  fill image
-fillImageList = os.listdir('%s/images' % dir)
-fillImageName = random.choice(fillImageList)
-fillImage = Image.open('%s/images/%s' % (dir, fillImageName))
-fillImage = fillImage.convert('RGBA')
+# Choose random fill image and open file and convert to rgba
+fillImageName = getRandomFillImageName()
+fillImage = openRandomFillImage(fillImageName)
+fillImageName2 = getRandomFillImageName()
+fillImage2 = openRandomFillImage(fillImageName2)
 print("Fill Image: " + fillImageName)
+print("Fill Image 2: " + fillImageName2)
 
-# watermark image
-watermarkImage = Image.open(os.path.join(
-    os.path.dirname(__file__), 'watermark.png'))
-watermarkImage = watermarkImage.convert('RGBA')
+fxMaskImageName = getRandomFxMaskImageName(templateFolderName, 1)
+fxMaskImage = getRandomFxMaskImage(fxMaskImageName)
+fxMaskImageName2 = getRandomFxMaskImageName(templateFolderName, 2)
+fxMaskImage2 = getRandomFxMaskImage(fxMaskImageName2)
 
+# Load template and fill image and fx image
 templateImagePixels = templateImage.load()
 fillImagePixels = fillImage.load()
-watermarkImagePixels = watermarkImage.load()
+fillImagePixels2 = fillImage2.load()
+fxMaskImagePixels = fxMaskImage.load()
+fxMaskImagePixels2 = fxMaskImage2.load()
 
+# Choose random replacement colour to be replaced by fill image
 imageIndex = random.randint(0, len(coloursToReplace) - 1)
 
-# Generate Random Colours
-randomColours = []
-for i in range(0, len(coloursToReplace)):
-    c = Color(hsl=(random.uniform(0, 1),
-                   random.uniform(0, 1), random.uniform(0, 1)))
-    r = max(0, int(round(c.red * 256 - 1)))
-    g = max(0, int(round(c.green * 256 - 1)))
-    b = max(0, int(round(c.blue * 256 - 1)))
 
-    randomColours.append([r, g, b])
+# Get Random Colours
+randomColours = getRandomColoursList()
+
 
 # Replace Colours
 for y in list(range(templateImage.size[1])):
     for x in list(range(templateImage.size[0])):
         for z in range(0, len(coloursToReplace)):
             if templateImagePixels[x, y] == (coloursToReplace[z][0], coloursToReplace[z][1], coloursToReplace[z][2], 255):
-                if (z == imageIndex):
-                    templateImagePixels[x, y] = fillImagePixels[x, y]
-                else:
-                    templateImagePixels[x, y] = (
-                        randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
+                templateImagePixels[x, y] = (
+                    randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
 
-# Add Watermark
-for x in range(templateImage.size[0] - 96, templateImage.size[0]):
-    for y in range(templateImage.size[1] - 20, templateImage.size[1]):
-        if (watermarkImagePixels[x - templateImage.size[0] + 96, y - templateImage.size[1] + 20][3] >= 255):
-            templateImagePixels[x, y] = watermarkImagePixels[x -
-                                                             templateImage.size[0] + 96, y - templateImage.size[1] + 20]
+
+def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fillImagePixels):
+    for y in list(range(templateImage.size[1])):
+        for x in list(range(templateImage.size[0])):
+            if (fxMaskImagePixels[x, y] == (255, 255, 255, 255)):
+                templateImagePixels[x, y] = fillImagePixels[x, y]
+
+
+# Apply FX
+applyReplacementFx(templateImage, templateImagePixels,
+                   fxMaskImagePixels, fillImagePixels)
+
+applyReplacementFx(templateImage, templateImagePixels,
+                   fxMaskImagePixels2, fillImagePixels2)
 
 # Save Image
 templateImage.save(os.path.join(dir, 'output.png'))
 print("Output: " + os.path.join(dir, 'output.png'))
 
-# Create Random Name
-tweetText = '%s %s %s %s' % (
-    random.choice(list(open(os.path.join(os.path.dirname(
-        __file__), 'text/adjectives.txt')))).rstrip().title(),
-    random.choice(
-        list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
-    random.choice(
-        list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
-    random.choice(
-        list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
-)
+# Get Text to Tweet
+tweetText = getRandomTweetText()
 print("Tweet: " + tweetText)
 
 # Tweet!
