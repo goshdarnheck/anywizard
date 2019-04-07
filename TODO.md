@@ -1,6 +1,6 @@
 # TODO
 
-- add more emojis
+- add even more emojis
 - template file:
   - mutiple images (to give ability for variations) - GET LIST AND CHOOSE RANDOM
   - mask file to set area for image replacement - LOAD THIS, READ IT INSTEAD OF RANDOM COLOUR FOR FILL

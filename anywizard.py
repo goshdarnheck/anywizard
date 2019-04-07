@@ -1,3 +1,5 @@
+import time
+import re
 import configparser
 import random
 import os
@@ -15,7 +17,7 @@ def getTweepyApi(cfg):
 
 def getRandomColoursList():
     randomColours = []
-    for i in range(0, len(coloursToReplace)):
+    for _ in range(0, len(coloursToReplace)):
         c = Color(hsl=(random.uniform(0, 1),
                        random.uniform(0, 1), random.uniform(0, 1)))
         r = max(0, int(round(c.red * 256 - 1)))
@@ -29,16 +31,14 @@ def getRandomColoursList():
 
 def getTemplateFolderName(templateSetting):
     templateImageList = os.listdir('%s/templates' % dir)
-    templateFolderName = random.choice(
+    return random.choice(
         templateImageList) if templateSetting == 'random' else templateSetting
-    return templateFolderName
 
 
 def getRandomTemplateImage(templateFolderName):
     templateImage = Image.open('%s/templates/%s/wizard.2.png' %
                                (dir, templateFolderName))
-    templateImage = templateImage.convert('RGBA')
-    return templateImage
+    return templateImage.convert('RGBA')
 
 
 def getRandomFillImageName():
@@ -48,12 +48,11 @@ def getRandomFillImageName():
 
 def openRandomFillImage(fillImageName):
     fillImage = Image.open('%s/images/%s' % (dir, fillImageName))
-    fillImage = fillImage.convert('RGBA')
-    return fillImage
+    return fillImage.convert('RGBA')
 
 
 def getRandomTweetText():
-    tweetText = '%s %s %s %s' % (
+    return '%s %s %s %s' % (
         random.choice(list(open(os.path.join(os.path.dirname(
             __file__), 'text/adjectives.txt')))).rstrip().title(),
         random.choice(
@@ -63,18 +62,28 @@ def getRandomTweetText():
         random.choice(
             list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
     )
-    return tweetText
 
 
 def getRandomFxMaskImageName(templateFolderName, removeThis):
-    return '%s/fx.%s.png' % (templateFolderName, removeThis)
+    fxMaskList = [f for f in os.listdir(
+        'templates/%s' % templateFolderName) if re.match(r'fx\.[0-9]\.png', f)]
+    fxMaskImageName = random.choice(fxMaskList)
+    return '%s/%s' % (templateFolderName, fxMaskImageName)
 
 
 def getRandomFxMaskImage(fxMaskImageName):
     fxMaskImage = Image.open('templates/%s' % fxMaskImageName)
-    fxMaskImage = fxMaskImage.convert('RGBA')
-    return fxMaskImage
+    return fxMaskImage.convert('RGBA')
 
+
+def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fillImagePixels):
+    for y in list(range(templateImage.size[1])):
+        for x in list(range(templateImage.size[0])):
+            if (fxMaskImagePixels[x, y] == (255, 255, 255, 255)):
+                templateImagePixels[x, y] = fillImagePixels[x, y]
+
+
+start_time = time.time()
 
 # Read Config File
 dir = os.path.dirname(os.path.abspath(__file__))
@@ -140,13 +149,6 @@ for y in list(range(templateImage.size[1])):
                     randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
 
 
-def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fillImagePixels):
-    for y in list(range(templateImage.size[1])):
-        for x in list(range(templateImage.size[0])):
-            if (fxMaskImagePixels[x, y] == (255, 255, 255, 255)):
-                templateImagePixels[x, y] = fillImagePixels[x, y]
-
-
 # Apply FX
 applyReplacementFx(templateImage, templateImagePixels,
                    fxMaskImagePixels, fillImagePixels)
@@ -168,3 +170,6 @@ if tweet:
     tweepyApi = getTweepyApi(twitterConfig)
     thing = tweepyApi.update_with_media(
         os.path.join(dir, 'output.png'), tweetText)
+
+elapsed_time = time.time() - start_time
+print('Completed in %ss' % round(elapsed_time, 2))
