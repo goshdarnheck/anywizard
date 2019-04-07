@@ -8,8 +8,8 @@ Any Wizard is a script that replaces colours randomly in a random image with oth
 - Add your Twitter API credentials to config.sample.ini
 - Rename config.sample.ini to config.ini
 - Add replacement images to /images if desired
-- Add template images to /templates
-- \$ python main.py
+- Setup templates, read section "Creating Templates" below
+- \$ py anywizard.py
 
 ## Template image requirements
 
@@ -18,19 +18,22 @@ Any Wizard is a script that replaces colours randomly in a random image with oth
 
 ## Config
 
-- create a file named config.ini (a sample is supplied as config.sample.ini)
-- add your Twitter API credentials to config.ini unders [TwitterApiCreds]
-- settings:
-  - tweet: boolean, whether or not to send tweet
-  - template: string, folder name of template to load. A value of random will load a random template from the templates folder
+- Create a file named config.ini (a sample is supplied as config.sample.ini)
+- Add your Twitter API credentials to config.ini unders [TwitterApiCreds]
+- Settings:
+  - Tweet: boolean, whether or not to send tweet
+  - Template: string, folder name of template to load. A value of "random" (without quotes) will load a random template from the templates folder
 
 ## Creating Templates
 
-- each template must have it's own folder in the templates directory
-- each template must have a config.json file
-- config.json files can have the following properties:
-  - colours: an array of colours to replace, each colour an array with rgba values repsectively
-- wizard image templates should be named wizard.[n].png where [n] can be anything. this gives the ability to have variations per template
+- Each template must have it's own folder in the templates directory
+- Each template must have a config.json file
+- Config.json files can have the following properties:
+  - Colours: an array of colours to replace, each colour an array with rgba values repsectively
+- Wizard image templates should be named wizard.[n].png where [n] can be [0-9]. This gives the ability to have variations per template
+- FXZ image templates should be named fx.[n].png where n can be [0-9]
+- FX images should be black and white, where white pixels indicate where an effect is to be applied
+- Currently, FX will also be a fill image, and 2 FX will be attempted
 
 ### Who do I talk to?
 

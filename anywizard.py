@@ -31,49 +31,61 @@ def getRandomColoursList():
 
 def getTemplateFolderName(templateSetting):
     templateImageList = os.listdir('%s/templates' % dir)
-    return random.choice(
+    templateFolderName = random.choice(
         templateImageList) if templateSetting == 'random' else templateSetting
+    print("Template Folder: " + templateFolderName)
+    return templateFolderName
 
 
 def getRandomTemplateImage(templateFolderName):
-    templateImage = Image.open('%s/templates/%s/wizard.2.png' %
-                               (dir, templateFolderName))
+    imageList = [f for f in os.listdir(
+        'templates/%s' % templateFolderName) if re.match(r'wizard\.[0-9]\.png', f)]
+    imageName = random.choice(imageList)
+    print("Template Image: %s" % imageName)
+    templateImage = Image.open('%s/templates/%s/%s' %
+                               (dir, templateFolderName, imageName))
+
     return templateImage.convert('RGBA')
 
 
-def getRandomFillImageName():
+def getRandomFillImage():
     fillImageList = os.listdir('%s/images' % dir)
-    return random.choice(fillImageList)
-
-
-def openRandomFillImage(fillImageName):
-    fillImage = Image.open('%s/images/%s' % (dir, fillImageName))
+    randomFillImageName = random.choice(fillImageList)
+    fillImage = Image.open('%s/images/%s' % (dir, randomFillImageName))
+    print("Fill Image: " + randomFillImageName)
     return fillImage.convert('RGBA')
 
 
 def getRandomTweetText():
-    return '%s %s %s %s' % (
+    name = '%s %s %s' % (
         random.choice(list(open(os.path.join(os.path.dirname(
             __file__), 'text/adjectives.txt')))).rstrip().title(),
         random.choice(
             list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
         random.choice(
             list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
-        random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
+
     )
 
+    emoji = random.choice(
+        list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
+    emojiText = random.choice(
+        list(open(os.path.join(os.path.dirname(__file__), 'text/emojitext.txt'), encoding="utf-8"))).rstrip()
 
-def getRandomFxMaskImageName(templateFolderName, removeThis):
+    return '%s\n[%s] %s' % (name, emojiText, emoji)
+
+
+def getRandomFxMaskImage(templateFolderName):
     fxMaskList = [f for f in os.listdir(
         'templates/%s' % templateFolderName) if re.match(r'fx\.[0-9]\.png', f)]
-    fxMaskImageName = random.choice(fxMaskList)
-    return '%s/%s' % (templateFolderName, fxMaskImageName)
 
-
-def getRandomFxMaskImage(fxMaskImageName):
-    fxMaskImage = Image.open('templates/%s' % fxMaskImageName)
-    return fxMaskImage.convert('RGBA')
+    if (fxMaskList):
+        fxMaskImageName = random.choice(fxMaskList)
+        fxMaskImage = Image.open('templates/%s/%s' %
+                                 (templateFolderName, fxMaskImageName))
+        return fxMaskImage.convert('RGBA')
+    else:
+        return 0
 
 
 def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fillImagePixels):
@@ -83,6 +95,7 @@ def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fi
                 templateImagePixels[x, y] = fillImagePixels[x, y]
 
 
+# Get start time so we can log elapsed time
 start_time = time.time()
 
 # Read Config File
@@ -104,41 +117,18 @@ templateSetting = Config.get('settings', 'template')
 # Choose random template and open template image and convert to rgba
 templateFolderName = getTemplateFolderName(templateSetting)
 templateImage = getRandomTemplateImage(templateFolderName)
-print("Template Folder: " + templateFolderName)
-print("Template Image: wizard.2.png")
 
 # Load colours to replace from template config
 with open((os.path.join(os.path.dirname(__file__), 'templates/%s/config.json' % templateFolderName))) as f:
     coloursToReplaceJson = json.load(f)
 coloursToReplace = coloursToReplaceJson["colours"]
 
-# Choose random fill image and open file and convert to rgba
-fillImageName = getRandomFillImageName()
-fillImage = openRandomFillImage(fillImageName)
-fillImageName2 = getRandomFillImageName()
-fillImage2 = openRandomFillImage(fillImageName2)
-print("Fill Image: " + fillImageName)
-print("Fill Image 2: " + fillImageName2)
-
-fxMaskImageName = getRandomFxMaskImageName(templateFolderName, 1)
-fxMaskImage = getRandomFxMaskImage(fxMaskImageName)
-fxMaskImageName2 = getRandomFxMaskImageName(templateFolderName, 2)
-fxMaskImage2 = getRandomFxMaskImage(fxMaskImageName2)
 
 # Load template and fill image and fx image
 templateImagePixels = templateImage.load()
-fillImagePixels = fillImage.load()
-fillImagePixels2 = fillImage2.load()
-fxMaskImagePixels = fxMaskImage.load()
-fxMaskImagePixels2 = fxMaskImage2.load()
-
-# Choose random replacement colour to be replaced by fill image
-imageIndex = random.randint(0, len(coloursToReplace) - 1)
-
 
 # Get Random Colours
 randomColours = getRandomColoursList()
-
 
 # Replace Colours
 for y in list(range(templateImage.size[1])):
@@ -148,13 +138,24 @@ for y in list(range(templateImage.size[1])):
                 templateImagePixels[x, y] = (
                     randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
 
+# Get FX Stuff
+# Get 2 random fill images
+fillImage = getRandomFillImage()
+fillImage2 = getRandomFillImage()
 
-# Apply FX
-applyReplacementFx(templateImage, templateImagePixels,
-                   fxMaskImagePixels, fillImagePixels)
+# Get Random FX mask and apply fill image FX
+fxMaskImage = getRandomFxMaskImage(templateFolderName)
+if (fxMaskImage):
+    fxMaskImagePixels = fxMaskImage.load()
+    applyReplacementFx(templateImage, templateImagePixels,
+                       fxMaskImagePixels, fillImage.load())
 
-applyReplacementFx(templateImage, templateImagePixels,
-                   fxMaskImagePixels2, fillImagePixels2)
+# Get Random FX mask and apply fill image again
+fxMaskImage = getRandomFxMaskImage(templateFolderName)
+if (fxMaskImage):
+    fxMaskImagePixels = fxMaskImage.load()
+    applyReplacementFx(templateImage, templateImagePixels,
+                       fxMaskImagePixels, fillImage2.load())
 
 # Save Image
 templateImage.save(os.path.join(dir, 'output.png'))
@@ -171,5 +172,6 @@ if tweet:
     thing = tweepyApi.update_with_media(
         os.path.join(dir, 'output.png'), tweetText)
 
+# Display elapsed time
 elapsed_time = time.time() - start_time
 print('Completed in %ss' % round(elapsed_time, 2))
