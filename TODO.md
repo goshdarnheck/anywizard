@@ -9,6 +9,10 @@
 
   - more variations for grammar (add random titles, "of Coolplace" type of things)
   - DND stats
+  - descriptions
+  - quotes
 
 - test code please
 - make size of templates configurable
+- reply with wizard to replies that reply with the right text
+- webpage click button get wizard

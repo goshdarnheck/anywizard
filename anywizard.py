@@ -15,9 +15,9 @@ def getTweepyApi(cfg):
     return tweepy.API(auth)
 
 
-def getRandomColoursList():
+def getRandomColoursList(length):
     randomColours = []
-    for _ in range(0, len(coloursToReplace)):
+    for _ in range(0, length):
         c = Color(hsl=(random.uniform(0, 1),
                        random.uniform(0, 1), random.uniform(0, 1)))
         r = max(0, int(round(c.red * 256 - 1)))
@@ -72,7 +72,7 @@ def getRandomTweetText():
     emojiText = random.choice(
         list(open(os.path.join(os.path.dirname(__file__), 'text/emojitext.txt'), encoding="utf-8"))).rstrip()
 
-    return '%s\n[%s] %s' % (name, emojiText, emoji)
+    return '%s\n- %s: %s' % (name, emojiText, emoji)
 
 
 def getRandomFxMaskImage(templateFolderName):
@@ -98,7 +98,7 @@ def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fi
 # Get start time so we can log elapsed time
 start_time = time.time()
 
-# Read Config File
+# Open and parse config file
 dir = os.path.dirname(os.path.abspath(__file__))
 Config = configparser.ConfigParser()
 Config.read(os.path.join(dir, 'config.ini'))
@@ -128,7 +128,7 @@ coloursToReplace = coloursToReplaceJson["colours"]
 templateImagePixels = templateImage.load()
 
 # Get Random Colours
-randomColours = getRandomColoursList()
+randomColours = getRandomColoursList(len(coloursToReplace))
 
 # Replace Colours
 for y in list(range(templateImage.size[1])):
@@ -163,7 +163,9 @@ print("Output: " + os.path.join(dir, 'output.png'))
 
 # Get Text to Tweet
 tweetText = getRandomTweetText()
-print("Tweet: " + tweetText)
+print("\nTweet:")
+print(tweetText)
+print("\n")
 
 # Tweet!
 print("Tweeting: " + str(tweet))
