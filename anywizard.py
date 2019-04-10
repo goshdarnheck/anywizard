@@ -39,7 +39,7 @@ def getTemplateFolderName(templateSetting):
 
 def getRandomTemplateImage(templateFolderName):
     imageList = [f for f in os.listdir(
-        'templates/%s' % templateFolderName) if re.match(r'wizard\.[0-9]\.png', f)]
+        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'wizard\.[0-9]\.png', f)]
     imageName = random.choice(imageList)
     print("Template Image: %s" % imageName)
     templateImage = Image.open('%s/templates/%s/%s' %
@@ -77,12 +77,12 @@ def getRandomTweetText():
 
 def getRandomFxMaskImage(templateFolderName):
     fxMaskList = [f for f in os.listdir(
-        'templates/%s' % templateFolderName) if re.match(r'fx\.[0-9]\.png', f)]
+        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'fx\.[0-9]\.png', f)]
 
     if (fxMaskList):
         fxMaskImageName = random.choice(fxMaskList)
-        fxMaskImage = Image.open('templates/%s/%s' %
-                                 (templateFolderName, fxMaskImageName))
+        fxMaskImage = Image.open('%s/templates/%s/%s' %
+                                 (dir, templateFolderName, fxMaskImageName))
         return fxMaskImage.convert('RGBA')
     else:
         return 0
