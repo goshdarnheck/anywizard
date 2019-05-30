@@ -39,7 +39,7 @@ def getTemplateFolderName(templateSetting):
 
 def getRandomTemplateImage(templateFolderName):
     imageList = [f for f in os.listdir(
-        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'wizard\.[0-9]\.png', f)]
+        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'wizard\.[0-9]+\.png', f)]
     imageName = random.choice(imageList)
     print("Template Image: %s" % imageName)
     templateImage = Image.open('%s/templates/%s/%s' %
@@ -77,12 +77,13 @@ def getRandomTweetText():
 
 def getRandomFxMaskImage(templateFolderName):
     fxMaskList = [f for f in os.listdir(
-        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'fx\.[0-9]\.png', f)]
+        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'fx\.[0-9]+\.png', f)]
 
     if (fxMaskList):
         fxMaskImageName = random.choice(fxMaskList)
         fxMaskImage = Image.open('%s/templates/%s/%s' %
                                  (dir, templateFolderName, fxMaskImageName))
+        print("FX Image: " + fxMaskImageName)
         return fxMaskImage.convert('RGBA')
     else:
         return 0
@@ -113,6 +114,8 @@ twitterConfig = {
 tweet = Config.getboolean('settings', 'tweet')
 templateSetting = Config.get('settings', 'template')
 
+print("Tweeting: " + str(tweet))
+print("Template Setting: " + str(templateSetting))
 
 # Choose random template and open template image and convert to rgba
 templateFolderName = getTemplateFolderName(templateSetting)
@@ -163,12 +166,9 @@ print("Output: " + os.path.join(dir, 'output.png'))
 
 # Get Text to Tweet
 tweetText = getRandomTweetText()
-print("\nTweet:")
-print(tweetText)
-print("\n")
+print("\nTweet:" + tweetText + "\n")
 
 # Tweet!
-print("Tweeting: " + str(tweet))
 if tweet:
     tweepyApi = getTweepyApi(twitterConfig)
     thing = tweepyApi.update_with_media(
