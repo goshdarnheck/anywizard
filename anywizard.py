@@ -166,7 +166,7 @@ print("Output: " + os.path.join(dir, 'output.png'))
 
 # Get Text to Tweet
 tweetText = getRandomTweetText()
-print("\nTweet:" + tweetText + "\n")
+print("\nTweet: " + tweetText + "\n")
 
 # Tweet!
 if tweet:
