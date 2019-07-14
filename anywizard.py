@@ -6,27 +6,14 @@ import os
 import json
 import tweepy
 from PIL import Image
-from colour import Color
+import anytext
+import anycolours
 
 
 def getTweepyApi(cfg):
     auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
     auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
     return tweepy.API(auth)
-
-
-def getRandomColoursList(length):
-    randomColours = []
-    for _ in range(0, length):
-        c = Color(hsl=(random.uniform(0, 1),
-                       random.uniform(0, 1), random.uniform(0, 1)))
-        r = max(0, int(round(c.red * 256 - 1)))
-        g = max(0, int(round(c.green * 256 - 1)))
-        b = max(0, int(round(c.blue * 256 - 1)))
-
-        randomColours.append([r, g, b])
-
-    return randomColours
 
 
 def getTemplateFolderName(templateSetting):
@@ -54,25 +41,6 @@ def getRandomFillImage():
     fillImage = Image.open('%s/images/%s' % (dir, randomFillImageName))
     print("Fill Image: " + randomFillImageName)
     return fillImage.convert('RGBA')
-
-
-def getRandomTweetText():
-    name = '%s %s %s' % (
-        random.choice(list(open(os.path.join(os.path.dirname(
-            __file__), 'text/adjectives.txt')))).rstrip().title(),
-        random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'text/nouns.txt')))).rstrip(),
-        random.choice(
-            list(open(os.path.join(os.path.dirname(__file__), 'text/jobs.txt')))).rstrip(),
-
-    )
-
-    emoji = random.choice(
-        list(open(os.path.join(os.path.dirname(__file__), 'text/emojis.txt'), encoding="utf-8"))).rstrip()
-    emojiText = random.choice(
-        list(open(os.path.join(os.path.dirname(__file__), 'text/emojitext.txt'), encoding="utf-8"))).rstrip()
-
-    return '%s\n- %s: %s' % (name, emojiText, emoji)
 
 
 def getRandomFxMaskImage(templateFolderName):
@@ -131,7 +99,7 @@ coloursToReplace = coloursToReplaceJson["colours"]
 templateImagePixels = templateImage.load()
 
 # Get Random Colours
-randomColours = getRandomColoursList(len(coloursToReplace))
+randomColours = anycolours.getRandomColoursList(len(coloursToReplace))
 
 # Replace Colours
 for y in list(range(templateImage.size[1])):
@@ -165,7 +133,7 @@ templateImage.save(os.path.join(dir, 'output.png'))
 print("Output: " + os.path.join(dir, 'output.png'))
 
 # Get Text to Tweet
-tweetText = getRandomTweetText()
+tweetText = anytext.getRandomTweetText()
 print("\nTweet: " + tweetText + "\n")
 
 # Tweet!
