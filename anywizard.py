@@ -6,7 +6,7 @@ import os
 import json
 import tweepy
 from PIL import Image
-import anytext
+from Text import TextGenerator
 import anycolours
 
 
@@ -133,7 +133,8 @@ templateImage.save(os.path.join(dir, 'output.png'))
 print("Output: " + os.path.join(dir, 'output.png'))
 
 # Get Text to Tweet
-tweetText = anytext.getRandomTweetText()
+textGen = TextGenerator()
+tweetText = textGen.getRandomTweetText()
 print("\nTweet: " + tweetText + "\n")
 
 # Tweet!
