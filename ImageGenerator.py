@@ -3,7 +3,7 @@ import random
 from PIL import Image
 import re
 import json
-import anycolours
+import ColourGenerator
 
 
 class ImageGenerator:
@@ -24,7 +24,8 @@ class ImageGenerator:
         templateImagePixels = self.templateImage.load()
 
         # replace colours from colour settings with random colours
-        randomColours = anycolours.getRandomColoursList(len(coloursToReplace))
+        randomColours = ColourGenerator.getRandomColoursList(
+            len(coloursToReplace))
         self.replaceColours(templateImagePixels,
                             coloursToReplace, randomColours)
 
@@ -47,14 +48,14 @@ class ImageGenerator:
         templateImageList = os.listdir('%s/templates' % self.dir)
         templateFolderName = random.choice(
             templateImageList) if templateSetting == 'random' else templateSetting
-        print("CLASS Template Folder: " + templateFolderName)
+        print("Template Folder: " + templateFolderName)
         return templateFolderName
 
     def getRandomTemplateImage(self, templateFolderName):
         imageList = [f for f in os.listdir(
             '%s/templates/%s' % (self.dir, templateFolderName)) if re.match(r'wizard\.[0-9]+\.png', f)]
         imageName = random.choice(imageList)
-        print("CLASS Template Image: %s" % imageName)
+        print("Template Image: %s" % imageName)
         templateImage = Image.open('%s/templates/%s/%s' %
                                    (self.dir, templateFolderName, imageName))
 
