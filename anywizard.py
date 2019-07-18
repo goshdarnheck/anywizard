@@ -1,67 +1,15 @@
 import time
-import re
 import configparser
-import random
 import os
-import json
 import tweepy
-from PIL import Image
 from Text import TextGenerator
-import anycolours
+from ImageGenerator import ImageGenerator
 
 
 def getTweepyApi(cfg):
     auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
     auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
     return tweepy.API(auth)
-
-
-def getTemplateFolderName(templateSetting):
-    templateImageList = os.listdir('%s/templates' % dir)
-    templateFolderName = random.choice(
-        templateImageList) if templateSetting == 'random' else templateSetting
-    print("Template Folder: " + templateFolderName)
-    return templateFolderName
-
-
-def getRandomTemplateImage(templateFolderName):
-    imageList = [f for f in os.listdir(
-        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'wizard\.[0-9]+\.png', f)]
-    imageName = random.choice(imageList)
-    print("Template Image: %s" % imageName)
-    templateImage = Image.open('%s/templates/%s/%s' %
-                               (dir, templateFolderName, imageName))
-
-    return templateImage.convert('RGBA')
-
-
-def getRandomFillImage():
-    fillImageList = os.listdir('%s/images' % dir)
-    randomFillImageName = random.choice(fillImageList)
-    fillImage = Image.open('%s/images/%s' % (dir, randomFillImageName))
-    print("Fill Image: " + randomFillImageName)
-    return fillImage.convert('RGBA')
-
-
-def getRandomFxMaskImage(templateFolderName):
-    fxMaskList = [f for f in os.listdir(
-        '%s/templates/%s' % (dir, templateFolderName)) if re.match(r'fx\.[0-9]+\.png', f)]
-
-    if (fxMaskList):
-        fxMaskImageName = random.choice(fxMaskList)
-        fxMaskImage = Image.open('%s/templates/%s/%s' %
-                                 (dir, templateFolderName, fxMaskImageName))
-        print("FX Image: " + fxMaskImageName)
-        return fxMaskImage.convert('RGBA')
-    else:
-        return 0
-
-
-def applyReplacementFx(templateImage, templateImagePixels, fxMaskImagePixels, fillImagePixels):
-    for y in list(range(templateImage.size[1])):
-        for x in list(range(templateImage.size[0])):
-            if (fxMaskImagePixels[x, y] == (255, 255, 255, 255)):
-                templateImagePixels[x, y] = fillImagePixels[x, y]
 
 
 # Get start time so we can log elapsed time
@@ -85,52 +33,10 @@ templateSetting = Config.get('settings', 'template')
 print("Tweeting: " + str(tweet))
 print("Template Setting: " + str(templateSetting))
 
-# Choose random template and open template image and convert to rgba
-templateFolderName = getTemplateFolderName(templateSetting)
-templateImage = getRandomTemplateImage(templateFolderName)
-
-# Load colours to replace from template config
-with open((os.path.join(os.path.dirname(__file__), 'templates/%s/config.json' % templateFolderName))) as f:
-    coloursToReplaceJson = json.load(f)
-coloursToReplace = coloursToReplaceJson["colours"]
-
-
-# Load template and fill image and fx image
-templateImagePixels = templateImage.load()
-
-# Get Random Colours
-randomColours = anycolours.getRandomColoursList(len(coloursToReplace))
-
-# Replace Colours
-for y in list(range(templateImage.size[1])):
-    for x in list(range(templateImage.size[0])):
-        for z in range(0, len(coloursToReplace)):
-            if templateImagePixels[x, y] == (coloursToReplace[z][0], coloursToReplace[z][1], coloursToReplace[z][2], 255):
-                templateImagePixels[x, y] = (
-                    randomColours[z][0], randomColours[z][1], randomColours[z][2], 255)
-
-# Get FX Stuff
-# Get 2 random fill images
-fillImage = getRandomFillImage()
-fillImage2 = getRandomFillImage()
-
-# Get Random FX mask and apply fill image FX
-fxMaskImage = getRandomFxMaskImage(templateFolderName)
-if (fxMaskImage):
-    fxMaskImagePixels = fxMaskImage.load()
-    applyReplacementFx(templateImage, templateImagePixels,
-                       fxMaskImagePixels, fillImage.load())
-
-# Get Random FX mask and apply fill image again
-fxMaskImage = getRandomFxMaskImage(templateFolderName)
-if (fxMaskImage):
-    fxMaskImagePixels = fxMaskImage.load()
-    applyReplacementFx(templateImage, templateImagePixels,
-                       fxMaskImagePixels, fillImage2.load())
-
-# Save Image
-templateImage.save(os.path.join(dir, 'output.png'))
-print("Output: " + os.path.join(dir, 'output.png'))
+# REFACTOR
+imageGenerator = ImageGenerator(dir, templateSetting)
+imageGenerator.createImage('output.png')
+# REFACTOR
 
 # Get Text to Tweet
 textGen = TextGenerator()
