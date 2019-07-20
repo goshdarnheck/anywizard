@@ -11,11 +11,6 @@ Any Wizard is a script that replaces colours randomly in a random image with oth
 - Setup templates, read section "Creating Templates" below
 - \$ py anywizard.py
 
-## Template image requirements
-
-- Twitter keeps png files in the png format if the tweeted file has an alpha channel, so make one pixel transparent in any template image
-- 440x220px is recommended since that is the size of preview images on Twitter
-
 ## Config
 
 - Create a file named config.ini (a sample is supplied as config.sample.ini)
@@ -30,10 +25,11 @@ Any Wizard is a script that replaces colours randomly in a random image with oth
 - Each template must have a config.json file
 - Config.json files can have the following properties:
   - Colours: an array of colours to replace, each colour an array with rgba values repsectively
+- Wizard image templates and FX image are recommened to be 440px x 220px PNG files (Twitters current preview image size)
+- Wizard image templates work best w/ Twitter when they have an alpha channel (otherwise Twitter may generate and serve JPG files instead of PNGs)
 - Wizard image templates should be named wizard.[n].png where [n] can be [0-9]. This gives the ability to have variations per template
-- FXZ image templates should be named fx.[n].png where n can be [0-9]
+- FX image templates should be named fx.[n].png where n can be [0-9]
 - FX images should be black and white, where white pixels indicate where an effect is to be applied
-- Currently, FX will also be a fill image, and 2 FX will be attempted
 
 ### Who do I talk to?
 
