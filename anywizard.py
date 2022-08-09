@@ -36,8 +36,8 @@ if tweet:
     auth.set_access_token(Config.get('TwitterApiCreds', 'access_token'), Config.get(
         'TwitterApiCreds', 'access_token_secret'))
     tweepyApi = tweepy.API(auth)
-    tweetRes = tweepyApi.update_with_media(
-        os.path.join(dir, 'output.png'), tweetText)
+    tweetRes = tweepyApi.update_status_with_media(tweetText,
+        os.path.join(dir, 'output.png'))
 
 # Display elapsed time
 elapsed_time = time.time() - start_time
