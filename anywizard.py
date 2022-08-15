@@ -27,7 +27,7 @@ imageGenerator.createImage('output.png')
 # Get Text to Tweet
 textGen = TextGenerator()
 tweetText = textGen.getRandomTweetText()
-print("\nTweet: " + tweetText + "\n")
+print("\nTweet:\n" + tweetText + "\n")
 
 # Tweet!
 if tweet:

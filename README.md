@@ -8,7 +8,6 @@ Any Wizard is a script that replaces colours randomly in a random image with oth
 - Add your Twitter API credentials to config.sample.ini
 - Rename config.sample.ini to config.ini
 - Add replacement images to /images if desired
-- Setup templates, read section "Creating Templates" below
 - \$ py anywizard.py
 
 ## Config
