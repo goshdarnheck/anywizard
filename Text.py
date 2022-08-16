@@ -36,4 +36,4 @@ class TextGenerator:
         emoji = self.randomEmoji()
         emojiText = self.randomEmojiText()
 
-        return u'✦ %s ✦\n🛈 %s: %s' % (name, emojiText, emoji)
+        return u'✦ %s ✦\n%s: %s' % (name, emojiText, emoji)
